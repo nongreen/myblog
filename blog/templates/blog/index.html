@@ -1,0 +1,17 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+    <div class="posts">
+        {% for post in Posts %}
+            <div class="post-block">
+                <div class="post-title">{{ post.title }}</div>
+                <div class="post-short-body">
+                        {{ post.get_short_body }}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+        <div class="right-panel">
+        </div>
+        <div class="bottom">
+    </div>
+{% endblock %}
