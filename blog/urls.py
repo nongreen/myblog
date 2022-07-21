@@ -6,5 +6,9 @@ urlpatterns = [
     path(
         '',
         views.Index.as_view(),
-        name='index')
+        name='index'),
+    path(
+        'post/<int:slug>',
+        views.PostDetailView.as_view(),
+        name='detail')
     ]

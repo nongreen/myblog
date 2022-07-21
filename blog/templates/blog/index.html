@@ -1,13 +1,15 @@
 {% extends 'blog/base.html' %}
 {% block content %}
     <div class="posts">
-        {% for post in Posts %}
+        {% for post in post_list %}
+        <a class="post-link" href="/post/{{ post.slug }}">
             <div class="post-block">
                 <div class="post-title">{{ post.title }}</div>
                 <div class="post-short-body">
                         {{ post.get_short_body }}
                 </div>
             </div>
+        </a>
         {% endfor %}
         </div>
         <div class="right-panel">
