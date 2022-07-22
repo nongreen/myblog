@@ -1,0 +1,12 @@
+<nav id="nav-below" class="navigation" role="navigation">
+    {% if page_obj.has_previous and previous_url %}
+        <div class="nav-prev">
+            <a href="{{ previous_url }}">Previous page</a>
+        </div>
+    {% endif %}
+    {% if page_obj.has_next and next_url %}
+        <div class="nav-next">
+            <a href="{{ next_url }}">Next page</a>
+        </div>
+    {% endif %}
+</nav><!-- .navigation -->

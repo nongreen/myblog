@@ -1,4 +1,5 @@
 {% extends 'blog/base.html' %}
+{% load blog_tags %}
 {% block content %}
     <div class="posts">
         {% for post in post_list %}
@@ -6,12 +7,15 @@
             <div class="post-block">
                 <div class="post-title">{{ post.title }}</div>
                 <div class="post-short-body">
-                        {{ post.get_short_body }}
+                        {{ post.short_body }}
                 </div>
             </div>
         </a>
         {% endfor %}
-        </div>
+        {% if is_paginated %}
+            {% load_pagination_info page_obj %}
+        {% endif %}
+    </div>
         <div class="right-panel">
         </div>
         <div class="bottom">
