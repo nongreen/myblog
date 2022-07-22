@@ -1,15 +1,13 @@
 from django.db import models
 from django.utils import timezone
+from myblog.settings import LENGTH_SHORT_BODY
 
 from django.contrib.auth.models import User
 
 
-LENGHT_SHORT_BODY = 70
-
-
 # Create your models here.
 class Post(models.Model):
-    STATUS_CHOICES = (('draft', 'Draft'), ('published', 'Published'))
+    STATUS_CHOICES = (('published', 'Published'), ('draft', 'Draft'))
 
     title = models.CharField(max_length=100)
     body = models.TextField()
@@ -28,6 +26,9 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-    # todo: get_short_body as property
-    def get_short_body(self):
-        return self.body[0:LENGHT_SHORT_BODY]
+    @property
+    def short_body(self):
+        return self.body[0:LENGTH_SHORT_BODY]
+
+    class Meta:
+        ordering = ['-publish']
