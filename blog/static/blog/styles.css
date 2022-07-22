@@ -25,6 +25,10 @@ body {
         text-decoration: none;
 }
 
+.posts {
+        background-color: #eee;
+}
+
 .post-link {
         text-decoration: none;
         color: #000;
