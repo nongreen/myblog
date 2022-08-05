@@ -12,7 +12,7 @@ urlpatterns = [
         views.Index.as_view(),
         name='index_page'),
     path(
-        'post/<int:slug>',
-        views.PostDetailView.as_view(),
+        'article/<int:slug>',
+        views.ArticleDetailView.as_view(),
         name='detail')
     ]

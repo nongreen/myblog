@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
-class Post(models.Model):
+class Article(models.Model):
     STATUS_CHOICES = (('published', 'Published'), ('draft', 'Draft'))
 
     title = models.CharField(max_length=100)
@@ -32,3 +32,5 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-publish']
+        verbose_name = "Article"
+        verbose_name_plural = "Articles"
