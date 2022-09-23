@@ -1,0 +1,29 @@
+{% extends 'share_layout/base.html' %}
+
+{% load blog_tags %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" type="text/css" href="{% static 'blog/tags/article_info/css/styles.css' %}">
+{% endblock %}
+{% block content %}
+{% if user.username == account.username %}
+    {{ account }}
+
+    {% if user.is_author %}
+        <a class="create-article-link" href="/create_article">Create article</a>
+    {% endif %}
+
+    <!-- todo: block to 5 articles and full articles list-->
+    {% for article in user_articles %}
+        {% load_article_info article %}
+    {% endfor %}
+{% else %}
+    {{ account }}
+
+    <!-- todo: block to 5 articles and full articles list-->
+    {% for article in user_articles %}
+        {% load_article_info article %}
+    {% endfor %}
+{% endif %}
+{% endblock %}
