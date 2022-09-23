@@ -1,0 +1,77 @@
+
+/* Global settings */
+
+html {
+        line-height: 1.15;
+}
+
+body {
+        color: #555;
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3,
+h4, .h4
+h5, .h5,
+h6, .h6{
+       margin-top: 0;
+}
+
+.site-header{
+        background-color: #a26de8;
+        position: relative;
+        display: inline-block;
+        width: 100%;
+}
+
+.header-nav-element {
+        position: relative;
+        display: inline-block;
+        padding: 10px;
+        color: #b6c3cf;
+}
+
+.header-width {
+        margin 0 auto;
+        min-width: 320px;
+}
+
+.header-container {
+        padding: 0 16px;
+        margin: 0 auto;
+        display: flex;
+}
+
+.site-title {
+    width: 60%;
+}
+
+.home-link {
+        color: #2f4858;
+        background-color: initial;
+        text-decoration: none;
+        text-align: center;
+}
+
+.header-link-container{
+        width: 40%;
+}
+
+.header-link {
+        color: #2f4858;
+        background-color: initial;
+        text-decoration: none;
+        margin-top: 27px;
+        margin-left: 10px;
+        margin-right: 10px;
+        display: inline-block;
+}
+
+/*.content {
+        margin: 20px;
+        border-style: solid;
+        border-width: 2px;
+        border-color: #7F8842;
+        background-color: #c6d947;
+}*/

@@ -1,6 +1,3 @@
-.articles {
-}
-
 .article-link {
         text-decoration: none;
         color: #000;
@@ -12,10 +9,21 @@
         border-color: #000;
         margin: 5px 40px 5px 40px;
 }
-.article-info {
+.article-info-container {
         margin: 5px;
         margin-left: 15px;
 }
 .article-title {
-    font-size: 24px;
+        font-size: 24px;
+}
+.article-info-footer{
+        color: #959595;
+        margin-top: 28px;
+        display: flex;
+}
+.footer-info{
+        margin-left: 28px;
+}
+.views-counter {
+        color: #959595;
 }
