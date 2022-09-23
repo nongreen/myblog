@@ -1,0 +1,17 @@
+{% extends "share_layout/base.html" %}
+
+{% load blog_tags %}
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/tags/article_info/css/styles.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% for article in article_list %}
+        {% load_article_info article %}
+    {% endfor %}
+    {% if is_pagination %}
+        {% load_pagination_info page_obj %}
+    {% endif %}
+{% endblock %}
