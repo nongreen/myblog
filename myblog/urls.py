@@ -16,11 +16,18 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth.views import LoginView
 from django.urls import path, re_path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 from accounts.views import RegisterView
 
 urlpatterns = [
     path('', include('blog.urls')),
     path('admin/', admin.site.urls),
-    re_path(r'', include('accounts.urls', namespace='accounts'))
+    re_path(r'', include('accounts.urls', namespace='accounts')),
+    re_path(r'mdeditor/', include('mdeditor.urls')),
+    re_path(r'', include('comments.urls', namespace='comments'))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

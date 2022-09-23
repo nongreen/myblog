@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog'
+    'django.contrib.sites',
+    'blog',
+    'accounts',
+    'comments',
+    'mdeditor'
 ]
 
 MIDDLEWARE = [
@@ -76,8 +80,15 @@ WSGI_APPLICATION = 'myblog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DJANGO_MYSQL_DATABASE') or 'myblog',
+        'USER': os.environ.get('DJANGO_MYSQL_USER') or 'root',
+        'PASSWORD': os.environ.get('DJANGO_MYSQL_PASSWORD') or '11',
+        'HOST': os.environ.get('DJANGO_MYSQL_HOST') or '127.0.0.1',
+        'PORT': int(
+            os.environ.get('DJANGO_MYSQL_PORT') or 3306),
+        'OPTIONS': {
+            'charset': 'utf8mb4'},
     }
 }
 
@@ -100,7 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -118,10 +128,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+AUTH_USER_MODEL = 'accounts.BlogUser'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 PAGINATE_BY = 5
-LENGTH_SHORT_BODY = 70
+LENGTH_SHORT_BODY = 150
+
+SITE_ID = 1
+
+# mdeditor
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = '/media/'
