@@ -1,6 +1,7 @@
 from django import template
 from django.urls.base import reverse
 
+
 register = template.Library()
 
 
@@ -21,3 +22,39 @@ def load_pagination_info(page_obj):
         'previous_url': previous_url,
         'page_obj': page_obj
     }
+
+
+@register.inclusion_tag('blog/tags/article_info.html')
+def load_article_info(article):
+    return {'article': article}
+
+
+@register.inclusion_tag('blog/tags/sidebar.html')
+def load_sidebar(user):
+    return {}
+
+
+# todo: add reverse
+@register.simple_tag
+def get_profile_url(user):
+    site = '127.0.0.1:8000'
+    username = user.username
+
+    url = f"http://{site}/profile/{username}"
+
+    return url
+
+@register.simple_tag
+def query(qs, **kwargs):
+    """ template tag which allows queryset filtering. Usage:
+          {% query books author=author as mybooks %}
+          {% for book in mybooks %}
+            ...
+          {% endfor %}
+    """
+    return qs.filter(**kwargs)
+
+
+@register.simple_tag
+def test(user):
+    return user.__class__

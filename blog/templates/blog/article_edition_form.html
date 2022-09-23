@@ -1,0 +1,23 @@
+{% extends 'share_layout/base.html' %}
+{% load static %}
+{% block header %}
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+{% endblock %}
+{% block content %}
+{% if user.is_author %}
+<div class="article-edition-form">
+    <form class="form-edition" action="" method="post">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+
+        <script src="{% static 'blog/article_editor/js/remove_button.js' %}"></script>
+        <button class="delete" name="del" value="delete">Delete</button>
+        <button class="publish" type="submit">Submit</button>
+    </form>
+</div>
+{% else %}
+Access denied
+{% endif %}
+
+{% endblock %}
