@@ -1,5 +1,54 @@
 {% extends 'share_layout/base.html' %}
+{% load static %}
+{% block header %}
+    <link type="text/css"
+          rel="stylesheet" href="{% static 'comments/comment_list/css/comment_list.css' %}">
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+    <link href="{% static 'mdeditor/css/editormd.min.css' %}" rel="stylesheet">
+    <link href="{% static 'mdeditor/css/editormd.preview.css' %}" rel="stylesheet">
+{% endblock %}
 {% block content %}
-<h1>{{post.title}}</h1>
-<a>{{post.body}}</a>
+    <script src="{% static 'comments/comment_list/js/reply.js' %}"></script>
+{% if article.status == 'p' %}
+    <div class="row">
+        <div class="col-sm-8 post-main">
+            {% if article.author == user %}
+            <a href="/article/{{ article.id }}/edit">Edit</a>
+            {% endif %}
+            <div class="title">
+                <h1>{{article.title}}</h1>
+            </div>
+            <div class="body">
+                <p>{{article.body}}</p>
+            </div>
+            <!-- body -->
+        </div>
+        <!-- post_main -->
+
+        <!-- todo: restrict to 5 comments and after in new line -->
+        <div class="container col-sm-5 comments-block">
+            {% include 'comments/comment_list.html' %}
+        <!-- comments -->
+            {% if user.is_authenticated %}
+                {% include 'comments/comment_creation_form.html' %}
+            {% endif %}
+        </div>
+    </div>
+    <!-- row -->
+{% else %}
+    {% if article.author == user %}
+        <div class="row">
+            <a href="/article/{{ article.id }}/edit">Edit</a>
+            <div class="title">
+                <h1>{{article.title}}</h1>
+            </div>
+            <div class="body">
+                <p>{{article.body}}</p>
+            </div>
+        </div>
+    {% else %}
+        <!-- todo: add redirect to error page -->
+        Article have been deleted or hidden
+    {% endif %}
+{% endif %}
 {% endblock %}

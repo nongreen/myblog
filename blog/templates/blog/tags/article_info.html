@@ -1,0 +1,16 @@
+{% load blog_tags %}
+<a class="article-link" href="/article/{{ article.id }}">
+    <div class="article-block">
+        <div class="article-info-container">
+            <h3 class="article-title">{{ article.title }}</h3>
+            <div class="article-short-body">
+                {{ article.short_body }}
+            </div>
+            <div class="article-info-footer">
+                <div class="footer-info">Published at {{ article.publish }}</div>
+                <div class="footer-info"> by {{ article.author }}.</div>
+                <div class="footer-info">{{ article.get_views }} views</div>
+            </div>
+        </div>
+    </div>
+</a>
