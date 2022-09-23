@@ -1,0 +1,42 @@
+{% load comment_tags %}
+{% load blog_tags %}
+
+<div class="comment-content-block">
+    <a class="comment-author-url h4"
+       href="{{ comment.author.get_profile_url }}">
+        {{ comment.author }}
+    </a>
+    <div class="comment-body">
+        {{ comment.body }}
+    </div>
+    {% if user.is_authenticated %}
+        <div id="comment-{{ comment.id }}" class="comment">
+            <a id="comment-{{ comment.id }}-reply-link" class="reply" onclick="reply_to({{ comment.id }})">reply</a>
+        </div>
+    {% endif %}
+        {% query article_comments parent_comment=comment as children_comments %}
+        {% if children_comments %}
+            <div class="comment-children-block">
+            {% with children_comments_count=children_comments|length %}
+            {% for child in children_comments %}
+                {% with comment=child template_name='comments/comment.html' %}
+                    {% if children_comments_count > 1 and forloop.counter0 != 0%}
+                        <div class="comment-child" style="border-top: 2px solid #000;">
+                    {% else %}
+                        <div class="comment-child">
+                    {% endif %}
+
+                    {% if depth >= 1 %}
+                        {% include template_name %}
+                    {% else %}
+                        {% with depth=depth|add:2 %}
+                            {% include template_name %}
+                        {% endwith %}
+                    {% endif %}
+                    </div>
+                {% endwith %}
+            {% endfor %}
+            {% endwith %}
+            </div>
+        {% endif %}
+</div>

@@ -1,0 +1,18 @@
+<!-- todo: add line at the left of comments for display children -->
+<!-- todo: fix comment death: irregular adding comments to the comments -->
+
+<section class="comments">
+    <h1>Comments:</h1>
+    <div class="container">
+        {% load comment_tags %}
+        {% load blog_tags %}
+
+        {% query article_comments parent_comment=None as parent_comments %}
+
+        {% for comment in parent_comments %}
+            {% with depth=0 %}
+                {% include 'comments/comment.html' %}
+            {% endwith %}
+        {% endfor %}
+    </div>
+</section>

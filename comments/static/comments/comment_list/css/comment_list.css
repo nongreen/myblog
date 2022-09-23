@@ -1,0 +1,26 @@
+a.visited {
+        color: #555;
+}
+.comment-block {
+        color: #555;
+        display: block;
+        width: 100%;
+        border-left: 2px solid black;
+}
+.comment-text-block {
+        margin-left: 5px;
+}
+
+.comment-author-url {
+        text-decorator: none;
+        color: #555;
+        font-weight: 700;
+}
+.comment-children-block {
+        margin-left: 5px;
+        border-left: 2px solid #000;
+}
+
+.comment-child {
+        margin-left: 10px;
+}

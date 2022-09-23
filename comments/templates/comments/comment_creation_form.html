@@ -1,0 +1,7 @@
+<form id="comment-creation-form" action="{% url 'comments:comment_post' article.id %}" method="post" class="comment-creation-form" id="comment-create">
+    {% csrf_token %}
+    {{ form.body }}
+    {{ form.body.errors }}
+    {{ form.parent_comment_id }}
+    <button type="submit" class="comment-submit">Send</button>
+</form>
