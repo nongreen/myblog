@@ -1,5 +1,6 @@
 {% extends 'share_layout/base.html' %}
 {% load static %}
+{% load blog_tags %}
 {% block header %}
     <link type="text/css"
           rel="stylesheet" href="{% static 'comments/comment_list/css/comment_list.css' %}">
@@ -19,7 +20,9 @@
                 <h1>{{article.title}}</h1>
             </div>
             <div class="body">
-                <p>{{article.body}}</p>
+                {% autoescape off %}
+                    {% get_html_from_markdown article.body %}
+                {% endautoescape %}
             </div>
             <!-- body -->
         </div>

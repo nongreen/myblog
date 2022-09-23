@@ -1,6 +1,6 @@
 from django import template
 from django.urls.base import reverse
-
+from markdown import markdown
 
 register = template.Library()
 
@@ -44,6 +44,7 @@ def get_profile_url(user):
 
     return url
 
+
 @register.simple_tag
 def query(qs, **kwargs):
     """ template tag which allows queryset filtering. Usage:
@@ -53,6 +54,11 @@ def query(qs, **kwargs):
           {% endfor %}
     """
     return qs.filter(**kwargs)
+
+
+@register.simple_tag
+def get_html_from_markdown(markdown_text) -> str:
+    return markdown(markdown_text)
 
 
 @register.simple_tag
