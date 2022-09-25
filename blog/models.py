@@ -80,6 +80,24 @@ class Article(models.Model):
         comments = self.comment_set.filter(is_enable=True)
         return comments
 
+    def viewed(self, user):
+        viewed_user_list = self.get_viewed_users_list()
+
+        if isinstance(user, BlogUser) and user.username not in viewed_user_list:
+            viewed_user_list.append(user.username)
+            self.viewed_users = str(viewed_user_list)
+            self.save(update_fields=['viewed_users'])
+
+    def get_views(self):
+        viewed_user_list = self.get_viewed_users_list()
+
+        if isinstance(viewed_user_list, list):
+            return len(viewed_user_list)
+
+    def get_viewed_users_list(self):
+        if isinstance(self.viewed_users, str):
+            return ast.literal_eval(self.viewed_users)
+
     @property
     def short_body(self):
         return self.body[0:LENGTH_SHORT_BODY]
