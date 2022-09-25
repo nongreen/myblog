@@ -38,18 +38,18 @@ class Comment(models.Model):
         ordering = ['id']
         get_latest_by = 'id'
 
-    # todo: create another solution
     @property
-    def get_comment_death(self):
+    def death(self):
         """
         Return _death summed with 1 (for display in template)
         """
+
         return self._death + 1
 
     def __init__(self, *args, **kwargs):
         super(Comment, self).__init__(*args, **kwargs)
         if self.parent_comment:
-            self._death = self.parent_comment._death + 1
+            self._death = self.parent_comment.death
         else:
             self._death = 0
 
