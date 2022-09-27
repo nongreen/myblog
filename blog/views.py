@@ -37,13 +37,11 @@ class ArticleDetailView(DetailView):
     pk_url_kwarg = 'id'
     user = None
 
-    def get_object(self, queryset=None):
-        obj = super(ArticleDetailView, self).get_object(queryset)
-        obj.viewed(self.user)
-        return obj
-
     def get(self, request, *args, **kwargs):
         self.user = get_user(request)
+
+        obj = self.get_object()
+        obj.register_view(self.user)
 
         return super(ArticleDetailView, self).get(request)
 
@@ -51,7 +49,8 @@ class ArticleDetailView(DetailView):
         comment_form = CommentPostForm()
 
         kwargs['form'] = comment_form
-        kwargs['article_comments'] = self.object.article_comments()
+        kwargs['comments_to_self_article'] = \
+            self.object.comments_to_self_article
 
         return super(ArticleDetailView, self).get_context_data(**kwargs)
 

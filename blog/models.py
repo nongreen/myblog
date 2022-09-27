@@ -17,18 +17,6 @@ logger = logging.getLogger(__name__)
 class Article(models.Model):
     """
     Author, title, body are required. Other are optional
-
-    fields:
-        id (int)
-        author (ForeignKey)
-        category (ForeignKey)
-        title (str)
-        body (str)
-        publish (datetime)
-        created (datetime)
-        updated (datetime)
-        status (string) (Choices: STATUS_CHOICES)
-        viewed_users (str)
     """
 
     STATUS_CHOICES = (('p', 'Published'), ('d', 'Draft'))
@@ -66,7 +54,9 @@ class Article(models.Model):
             default='d'
             )
 
-    viewed_users = models.TextField(default='[]', editable=False)
+    # viewed_users_str storage list of viewed_users
+    # This solution uses for adding it in DB
+    viewed_users_str = models.TextField(default='[]', editable=False)
 
     class Meta:
         ordering = ['-publish']
@@ -76,27 +66,30 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
-    def article_comments(self) -> QuerySet:
-        comments = self.comment_set.filter(is_enable=True)
-        return comments
-
-    def viewed(self, user):
-        viewed_user_list = self.get_viewed_users_list()
+    def register_view(self, user):
+        viewed_user_list = self.viewed_users_list()
 
         if isinstance(user, BlogUser) and user.username not in viewed_user_list:
             viewed_user_list.append(user.username)
-            self.viewed_users = str(viewed_user_list)
-            self.save(update_fields=['viewed_users'])
+            self.viewed_users_str = str(viewed_user_list)
+            self.save(update_fields=['viewed_users_str'])
 
-    def get_views(self):
-        viewed_user_list = self.get_viewed_users_list()
+    @property
+    def viewed_users_list(self):
+        if isinstance(self.viewed_users_str, str):
+            return ast.literal_eval(self.viewed_users_str)
+
+    @property
+    def views_count(self):
+        viewed_user_list = self.viewed_users_list()
 
         if isinstance(viewed_user_list, list):
             return len(viewed_user_list)
 
-    def get_viewed_users_list(self):
-        if isinstance(self.viewed_users, str):
-            return ast.literal_eval(self.viewed_users)
+    @property
+    def comments_to_self_article(self) -> QuerySet:
+        comments = self.comment_set.filter(is_enable=True)
+        return comments
 
     @property
     def short_body(self):

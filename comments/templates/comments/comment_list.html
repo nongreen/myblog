@@ -7,7 +7,7 @@
         {% load comment_tags %}
         {% load blog_tags %}
 
-        {% query article_comments parent_comment=None as parent_comments %}
+        {% query comments_to_self_article parent_comment=None as parent_comments %}
 
         {% for comment in parent_comments %}
             {% with depth=0 %}

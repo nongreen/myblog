@@ -14,7 +14,7 @@
             <a id="comment-{{ comment.id }}-reply-link" class="reply" onclick="reply_to({{ comment.id }})">reply</a>
         </div>
     {% endif %}
-        {% query article_comments parent_comment=comment as children_comments %}
+        {% query comments_to_self_article  parent_comment=comment as children_comments %}
         {% if children_comments %}
             <div class="comment-children-block">
             {% with children_comments_count=children_comments|length %}
