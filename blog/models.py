@@ -2,6 +2,7 @@ import logging
 import ast
 
 from django.conf import settings
+from django.db.models import QuerySet
 from django.db import models
 from django.utils import timezone
 from myblog.settings import LENGTH_SHORT_BODY
@@ -14,6 +15,22 @@ logger = logging.getLogger(__name__)
 
 # Create your models here.
 class Article(models.Model):
+    """
+    Author, title, body are required. Other are optional
+
+    fields:
+        id (int)
+        author (ForeignKey)
+        category (ForeignKey)
+        title (str)
+        body (str)
+        publish (datetime)
+        created (datetime)
+        updated (datetime)
+        status (string) (Choices: STATUS_CHOICES)
+        viewed_users (str)
+    """
+
     STATUS_CHOICES = (('p', 'Published'), ('d', 'Draft'))
 
     id = models.BigAutoField(primary_key=True)
@@ -36,8 +53,8 @@ class Article(models.Model):
         on_delete=models.CASCADE
     )
 
-    title = models.CharField(max_length=100)
-    body = MDTextField('Body')
+    title = models.CharField(max_length=100, null=False, blank=False)
+    body = MDTextField('Body', null=False, blank=False)
 
     publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
@@ -59,6 +76,10 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+    def article_comments(self) -> QuerySet:
+        comments = self.comment_set.filter(is_enable=True)
+        return comments
+
     def viewed(self, user):
         viewed_user_list = self.get_viewed_users_list()
 
@@ -76,10 +97,6 @@ class Article(models.Model):
     def get_viewed_users_list(self):
         if isinstance(self.viewed_users, str):
             return ast.literal_eval(self.viewed_users)
-
-    def article_comments(self):
-        comments = self.comment_set.filter(is_enable=True)
-        return comments
 
     @property
     def short_body(self):
