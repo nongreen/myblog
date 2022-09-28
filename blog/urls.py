@@ -5,11 +5,11 @@ from . import views
 urlpatterns = [
     path(
         '',
-        views.Index.as_view(),
+        views.ArticleListView.as_view(),
         name='index'),
     path(
         'page/<int:page>',
-        views.Index.as_view(),
+        views.ArticleListView.as_view(),
         name='index_page'),
     path(
         'article/<int:id>',
@@ -17,11 +17,11 @@ urlpatterns = [
         name='article_detail'),
     path(
         'article/<int:article_id>/edit',
-        views.manage_article,
+        views.manage_article_view,
         name='article_edit'),
     path(
         'article/create',
-        views.manage_article,
+        views.manage_article_view,
         name='article_create',
         kwargs={'article_id': None}),
     path(

@@ -1,5 +1,4 @@
 from django.db import models
-from mdeditor.fields import MDTextField
 
 from accounts.models import BlogUser
 from blog.models import Article
