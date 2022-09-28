@@ -13,7 +13,6 @@ from accounts.models import BlogUser
 logger = logging.getLogger(__name__)
 
 
-# Create your models here.
 class Article(models.Model):
     """
     Author, title, body are required. Other are optional
@@ -44,15 +43,17 @@ class Article(models.Model):
     title = models.CharField(max_length=100, null=False, blank=False)
     body = MDTextField('Body', null=False, blank=False)
 
-    publish = models.DateTimeField(default=timezone.now)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    # todo: auto update at change status from 'd' to 'p'
+    publish = models.DateTimeField(default=timezone.now, editable=False)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    updated = models.DateTimeField(auto_now=True, editable=False)
 
     status = models.CharField(
-            max_length=10,
-            choices=STATUS_CHOICES,
-            default='d'
-            )
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='d',
+        db_column='status'
+    )
 
     # viewed_users_str storage list of viewed_users
     # This solution uses for adding it in DB
@@ -66,8 +67,29 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+    def save(
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None,
+    ):
+        if not self.author.is_author:
+            raise PermissionError("User isn't author or admin")
+
+        self.updated = timezone.now()
+
+        super(Article, self).save(
+            force_insert,
+            force_update,
+            using,
+            update_fields
+        )
+
     def register_view(self, user):
-        viewed_user_list = self.viewed_users_list()
+        """ register_view add present user to viewed_user_list,
+        if he isn't in it"""
+        viewed_user_list = self.viewed_users_list
 
         if isinstance(user, BlogUser) and user.username not in viewed_user_list:
             viewed_user_list.append(user.username)
@@ -81,10 +103,8 @@ class Article(models.Model):
 
     @property
     def views_count(self):
-        viewed_user_list = self.viewed_users_list()
-
-        if isinstance(viewed_user_list, list):
-            return len(viewed_user_list)
+        if isinstance(self.viewed_users_list, list):
+            return len(self.viewed_users_list)
 
     @property
     def comments_to_self_article(self) -> QuerySet:
@@ -97,11 +117,12 @@ class Article(models.Model):
 
 
 class Category(models.Model):
+    """ Storage articles. Name required. """
     name = models.CharField(
         'name',
         max_length=40,
         null=False,
-        unique=False,
+        unique=True,
         blank=False
         )
 

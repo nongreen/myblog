@@ -1,33 +1,28 @@
 # todo: add tests
 # todo: add cache
 # todo: add to admin permissions to editing and viewing any articles
-import logging
-
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import get_user
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Article, Category
 from .forms import ArticleForm
 from comments.forms import CommentPostForm
 
-logger = logging.getLogger(__name__)
-
 
 # Create your views here.
-class Index(ListView):
-    template_name = 'blog/article_list.html'
-    context_object_name = 'article_list'
+class ArticleListView(ListView):
+    """ It's index page """
 
+    template_name = 'blog/article_list.html'
+    model = Article
+    context_object_name = 'article_list'
     paginate_by = settings.PAGINATE_BY
     page_kwarg = 'page'
-
-    def get_queryset(self):
-        article_list = Article.objects.filter(status='p')
-        return article_list
 
 
 class ArticleDetailView(DetailView):
@@ -56,6 +51,7 @@ class ArticleDetailView(DetailView):
 
 
 class CategoryDetailView(ListView):
+    """ Uses to storage and show articles inhered to same category """
     template_name = "blog/category_detail.html"
     model = Category
     context_object_name = 'article_list'
@@ -71,10 +67,19 @@ class CategoryDetailView(ListView):
         return article_list
 
 
-def manage_article(request, article_id=None):
+def manage_article_view(request, article_id=None):
+    # Edition article, if can
     if article_id:
-        article = Article.objects.get(id=article_id)
+        try:
+            article = Article.objects.get(id=article_id)
+        except ObjectDoesNotExist:
+            return render(
+                request,
+                'share_layout/error_page.html',
+                {'body': 'Article not found'}
+            )
 
+        # GET request handler
         if request.method == "GET":
             form = ArticleForm(instance=article)
             return render(
@@ -82,14 +87,17 @@ def manage_article(request, article_id=None):
                 'blog/article_edition_form.html',
                 {'form': form}
             )
+
+        # POST and PUT requests handler
         if request.method in ("POST", "PUT"):
             form = ArticleForm(request.POST, instance=article)
+
             if request.POST.get("del"):
-                # todo: getting article from link (kwargs)
                 article = form.save(False)
                 article.delete()
 
                 return HttpResponseRedirect('/')
+
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect(f'/article/{article_id}')
@@ -99,9 +107,11 @@ def manage_article(request, article_id=None):
                     'blog/article_edition_form.html',
                     {'form': form}
                 )
+    # Creation article
     else:
         article = Article()
 
+        # GET requests handler
         if request.method == "GET":
             form = ArticleForm(instance=article)
             return render(
@@ -109,6 +119,8 @@ def manage_article(request, article_id=None):
                 'blog/article_edition_form.html',
                 {'form': form}
             )
+
+        # POST and PUT requests handler
         if request.method in ("POST", "PUT"):
             form = ArticleForm(request.POST, instance=article)
 
