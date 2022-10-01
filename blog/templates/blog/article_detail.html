@@ -12,29 +12,21 @@
     <script src="{% static 'comments/comment_list/js/reply.js' %}"></script>
 {% if article.status == 'p' %}
     <div class="row">
-        <div class="col-sm-8 post-main">
-            {% if article.author == user %}
-            <a href="/article/{{ article.id }}/edit">Edit</a>
+        <div class="col-sm-8 article-main">
+            {% if article.author == user or user.is_moderator or user.is_superuser %}
+                <a href="/article/{{ article.id }}/edit">Edit</a>
             {% endif %}
-            <div class="title">
-                <h1>{{article.title}}</h1>
-            </div>
-            <div class="body">
-                {% autoescape off %}
-                    {% get_html_from_markdown article.body %}
-                {% endautoescape %}
-            </div>
-            <!-- body -->
+            {% include 'blog/article_content.html' %}
         </div>
-        <!-- post_main -->
+        <!-- article-main -->
 
         <!-- todo: restrict to 5 comments and after in new line -->
         <div class="container col-sm-5 comments-block">
             {% include 'comments/comment_list.html' %}
-        <!-- comments -->
             {% if user.is_authenticated %}
                 {% include 'comments/comment_creation_form.html' %}
             {% endif %}
+            <!-- comments -->
         </div>
     </div>
     <!-- row -->
@@ -42,11 +34,13 @@
     {% if article.author == user %}
         <div class="row">
             <a href="/article/{{ article.id }}/edit">Edit</a>
-            <div class="title">
-                <h1>{{article.title}}</h1>
-            </div>
-            <div class="body">
-                <p>{{article.body}}</p>
+            {% include 'blog/article_content.html' %}
+            <div class="container col-sm-5 comments-block">
+                {% include 'comments/comment_list.html' %}
+                {% if user.is_authenticated %}
+                    {% include 'comments/comment_creation_form.html' %}
+                {% endif %}
+                <!-- comments -->
             </div>
         </div>
     {% else %}

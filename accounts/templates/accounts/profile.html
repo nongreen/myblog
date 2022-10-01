@@ -11,7 +11,7 @@
     {{ account }}
 
     {% if user.is_author %}
-        <a class="create-article-link" href="/create_article">Create article</a>
+        <a class="create-article-link" href="{% url 'article_create' %}">Create article</a>
     {% endif %}
 
     <!-- todo: block to 5 articles and full articles list-->

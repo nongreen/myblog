@@ -5,7 +5,7 @@ from markdown import markdown
 register = template.Library()
 
 
-@register.inclusion_tag('blog/tags/post_pagination.html')
+@register.inclusion_tag('blog/tags/article_pagination.html')
 def load_pagination_info(page_obj):
     next_url = ''
     previous_url = ''
@@ -29,18 +29,11 @@ def load_article_info(article):
     return {'article': article}
 
 
-@register.inclusion_tag('blog/tags/sidebar.html')
-def load_sidebar(user):
-    return {}
-
-
-# todo: add reverse
 @register.simple_tag
 def get_profile_url(user):
-    site = '127.0.0.1:8000'
     username = user.username
 
-    url = f"http://{site}/profile/{username}"
+    url = reverse("accounts:profile", kwargs={"username": username})
 
     return url
 

@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 
 from . import views
 
@@ -12,7 +12,7 @@ urlpatterns = [
         views.ArticleListView.as_view(),
         name='index_page'),
     path(
-        'article/<int:id>',
+        'article/<int:article_id>',
         views.ArticleDetailView.as_view(),
         name='article_detail'),
     path(
