@@ -1,5 +1,5 @@
 {% load blog_tags %}
-<a class="article-link" href="/article/{{ article.id }}">
+<a class="article-link" href="{% url 'article_detail' article_id=article.id %}">
     <div class="article-block">
         <div class="article-info-container">
             <h3 class="article-title">{{ article.title }}</h3>

@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 class Article(models.Model):
     """
     Author, title, body are required. Other are optional
+    Important! Don't update status directly. Use set_status
     """
 
     STATUS_CHOICES = (('p', 'Published'), ('d', 'Draft'))
@@ -30,7 +31,7 @@ class Article(models.Model):
         default=None,
         limit_choices_to={'is_author': True},
         on_delete=models.CASCADE
-        )
+    )
 
     category = models.ForeignKey(
         'blog.Category',
@@ -43,16 +44,16 @@ class Article(models.Model):
     title = models.CharField(max_length=100, null=False, blank=False)
     body = MDTextField('Body', null=False, blank=False)
 
-    # todo: auto update at change status from 'd' to 'p'
     publish = models.DateTimeField(default=timezone.now, editable=False)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
 
+    # Important! Don't update status directly. Use set_status
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
         default='d',
-        db_column='status'
+        editable=False
     )
 
     # viewed_users_str storage list of viewed_users
@@ -74,17 +75,35 @@ class Article(models.Model):
             using=None,
             update_fields=None,
     ):
-        if not self.author.is_author:
-            raise PermissionError("User isn't author or admin")
-
-        self.updated = timezone.now()
+        if update_fields and not (
+            "viewed_users_list" in update_fields and
+            len(update_fields) == 1
+        ):
+            self.updated = timezone.now()
 
         super(Article, self).save(
-            force_insert,
-            force_update,
-            using,
-            update_fields
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields
         )
+
+    def set_status(self, new_status):
+        """ Realize autoupdate publish time """
+        if self.status == new_status:
+            return
+
+        if new_status == 'p':
+            self.status = new_status
+            self.publish = timezone.now()
+        elif new_status == 'd':
+            self.status = new_status
+        else:
+            raise ValueError(
+                "new_status must be 'p' or 'd'. Got a {0}".format(new_status)
+            )
+
+        self.save()
 
     def register_view(self, user):
         """ register_view add present user to viewed_user_list,
@@ -97,9 +116,15 @@ class Article(models.Model):
             self.save(update_fields=['viewed_users_str'])
 
     @property
-    def viewed_users_list(self):
+    def viewed_users_list(self) -> list:
+        """ Convert viewed users from str to list and return it """
         if isinstance(self.viewed_users_str, str):
-            return ast.literal_eval(self.viewed_users_str)
+            viewed_users_list = ast.literal_eval(self.viewed_users_str)
+
+            if not isinstance(viewed_users_list, list):
+                raise ValueError("viewed_users_str variable storage not list")
+
+            return viewed_users_list
 
     @property
     def views_count(self):
@@ -124,7 +149,7 @@ class Category(models.Model):
         null=False,
         unique=True,
         blank=False
-        )
+    )
 
     def __str__(self):
         return self.name

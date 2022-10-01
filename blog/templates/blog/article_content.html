@@ -1,0 +1,10 @@
+{% load blog_tags %}
+<div class="title">
+    <h1>{{article.title}}</h1>
+</div>
+<div class="body">
+    {% autoescape off %}
+        {% get_html_from_markdown article.body %}
+    {% endautoescape %}
+</div>
+<!-- body -->

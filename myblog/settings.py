@@ -143,3 +143,11 @@ SITE_ID = 1
 # mdeditor
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/media/'
+
+# errors
+ERROR_MESSAGES = {
+    "Edit nonexistent article":
+        "Article not found. You trying edit nonexistent article",
+    "Permission denied":
+        "Permission denied"
+}

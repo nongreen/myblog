@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
 {% endblock %}
 {% block content %}
-{% if user.is_author %}
+{% if user == author or user.is_moderator or user.is_superuser %}
 <div class="article-edition-form">
     <form class="form-edition" action="" method="post">
         {% csrf_token %}
@@ -12,8 +12,9 @@
         {{ form.as_p }}
 
         <script src="{% static 'blog/article_editor/js/remove_button.js' %}"></script>
-        <button class="delete" name="del" value="delete">Delete</button>
-        <button class="publish" type="submit">Submit</button>
+        <button class="publish" name="publish" value="p" type="submit">Publish</button>
+        <button class="draft" name="draft" value="d" type="submit">Draft</button>
+        <button class="delete" name="delete" value="delete" type="submit">Delete</button>
     </form>
 </div>
 {% else %}

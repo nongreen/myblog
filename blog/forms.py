@@ -12,4 +12,4 @@ class ArticleForm(ModelForm):
 
     class Meta:
         model = Article
-        fields = ['title', 'body', 'category', 'status']
+        fields = ['title', 'body', 'category']
