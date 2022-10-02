@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class Article(models.Model):
     """
-    Author, title, body are required. Other are optional
+    Author, title, body, category are required. Other are optional
     Important! Don't update status directly. Use set_status
     """
 
@@ -36,7 +36,8 @@ class Article(models.Model):
     category = models.ForeignKey(
         'blog.Category',
         verbose_name='Category',
-        blank=True,
+        blank=False,
+        null=False,
         default=None,
         on_delete=models.CASCADE
     )
@@ -46,7 +47,7 @@ class Article(models.Model):
 
     publish = models.DateTimeField(default=timezone.now, editable=False)
     created = models.DateTimeField(auto_now_add=True, editable=False)
-    updated = models.DateTimeField(auto_now=True, editable=False)
+    updated = models.DateTimeField(default=timezone.now, editable=False)
 
     # Important! Don't update status directly. Use set_status
     status = models.CharField(
@@ -88,7 +89,7 @@ class Article(models.Model):
             update_fields=update_fields
         )
 
-    def set_status(self, new_status):
+    def set_status(self, new_status: str) -> None:
         """ Realize autoupdate publish time """
         if self.status == new_status:
             return
@@ -105,15 +106,19 @@ class Article(models.Model):
 
         self.save()
 
-    def register_view(self, user):
-        """ register_view add present user to viewed_user_list,
-        if he isn't in it"""
+    def register_view(self, user: BlogUser) -> None:
+        """ Add present user to viewed_user_list, if he isn't in it"""
         viewed_user_list = self.viewed_users_list
 
         if isinstance(user, BlogUser) and user.username not in viewed_user_list:
             viewed_user_list.append(user.username)
             self.viewed_users_str = str(viewed_user_list)
             self.save(update_fields=['viewed_users_str'])
+        elif isinstance(user, BlogUser) and user.username in viewed_user_list:
+            return
+        else:
+            raise ValueError("Required BlogUser, excepted %d".format(
+                type(user)))
 
     @property
     def viewed_users_list(self) -> list:
@@ -130,6 +135,8 @@ class Article(models.Model):
     def views_count(self):
         if isinstance(self.viewed_users_list, list):
             return len(self.viewed_users_list)
+        else:
+            raise ValueError("viewed_users_list return not list")
 
     @property
     def comments_to_self_article(self) -> QuerySet:
