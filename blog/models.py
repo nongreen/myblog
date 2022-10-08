@@ -2,6 +2,7 @@ import logging
 import ast
 
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.db.models import QuerySet
 from django.db import models
 from django.utils import timezone
@@ -116,9 +117,10 @@ class Article(models.Model):
             self.save(update_fields=['viewed_users_str'])
         elif isinstance(user, BlogUser) and user.username in viewed_user_list:
             return
+        elif isinstance(user, AnonymousUser):
+            return
         else:
-            raise ValueError("Required BlogUser, excepted %d".format(
-                type(user)))
+            raise ValueError(f"Required BlogUser, excepted {type(user)}")
 
     @property
     def viewed_users_list(self) -> list:
@@ -150,12 +152,15 @@ class Article(models.Model):
 
 class Category(models.Model):
     """ Storage articles. Name required. """
+    id = models.BigAutoField(primary_key=True)
+
     name = models.CharField(
         'name',
         max_length=40,
         null=False,
         unique=True,
-        blank=False
+        blank=False,
+        default=None
     )
 
     def __str__(self):

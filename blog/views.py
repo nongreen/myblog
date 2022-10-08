@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from myblog.settings import ERROR_MESSAGES
 from myblog.utils import error_page
 from .models import Article, Category
-from .forms import ArticleForm
+from .forms import ArticleManagementForm
 from comments.forms import CommentPostForm
 
 
@@ -37,13 +37,12 @@ class ArticleDetailView(DetailView):
     model = Article
     context_object_name = 'article'
     pk_url_kwarg = 'article_id'
-    user = None
 
     def get(self, request, *args, **kwargs):
-        self.user = get_user(request)
+        user = get_user(request)
 
         obj = self.get_object()
-        obj.register_view(self.user)
+        obj.register_view(user)
 
         return super(ArticleDetailView, self).get(request)
 
@@ -60,14 +59,19 @@ class ArticleDetailView(DetailView):
 class CategoryDetailView(ListView):
     """ Uses to storage and show articles inhered to same category """
     template_name = "blog/category_detail.html"
-    model = Category
-    context_object_name = 'article_list'
+    model = Article
+    context_object_name = "article_list"
+    page_kwarg = "page"
+    paginate_by = settings.PAGINATE_BY
 
     def get_queryset(self):
-        queryset_name = self.kwargs["name"]
-        category = get_object_or_404(Category, name=queryset_name)
+        article_list = super(CategoryDetailView, self).get_queryset()
 
-        article_list = Article.objects.filter(
+        queryset_id = self.kwargs["category_id"]
+        category = get_object_or_404(Category, id=queryset_id)
+
+        article_list = article_list.filter(
+            status="p",
             category=category
         )
 
@@ -84,7 +88,7 @@ def manage_article_view(request, article_id=None):
 
 
 def article_form(request, article):
-    form = ArticleForm(instance=article)
+    form = ArticleManagementForm(instance=article)
     return render(
         request,
         'blog/article_form.html',
@@ -101,7 +105,7 @@ def creation_article(request):
 
     # POST and PUT requests handler
     if request.method in ("POST", "PUT"):
-        form = ArticleForm(request.POST, instance=article)
+        form = ArticleManagementForm(request.POST, instance=article)
 
         if form.is_valid():
             article = form.save(False)
@@ -154,7 +158,7 @@ def edition_article(request, article_id):
                                           or user.is_moderator):
             return error_page(request, ERROR_MESSAGES["Permission denied"])
 
-        form = ArticleForm(request.POST, instance=article)
+        form = ArticleManagementForm(request.POST, instance=article)
 
         # Delete article, if it needs
         if request.POST.get("delete"):

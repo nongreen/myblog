@@ -1,3 +1,5 @@
+from django.contrib.auth.models import AnonymousUser
+from django.db.utils import IntegrityError
 from django.utils import timezone
 from django.test import TestCase
 
@@ -45,7 +47,9 @@ class ArticleTest(TestCase):
         article.category = self.category
         article.save()
 
-        article = self._create_article()
+        with self.assertRaises(IntegrityError):
+            article = Article()
+            article.save()
 
     def test_modification_article(self):
         article = self._create_article()
@@ -103,6 +107,10 @@ class ArticleTest(TestCase):
         end_state_of_list = article.viewed_users_str
         self.assertEqual(start_state_of_list, end_state_of_list)
 
+        # Test register AnonymousUser
+        anonymous_user = AnonymousUser()
+        article.register_view(anonymous_user)
+
     def test_views_count(self):
         article = self._create_article()
         self.assertTrue(isinstance(article.views_count, int))
@@ -134,3 +142,14 @@ class ArticleTest(TestCase):
             is_author=True
         )[0]
         return user
+
+
+class CategoryTest(TestCase):
+    def test_category_creation(self):
+        category = Category()
+        category.name = "Test name"
+        category.save()
+
+        with self.assertRaises(IntegrityError):
+            category = Category()
+            category.save()
