@@ -97,14 +97,14 @@ class ArticleTest(TestCase):
         article = self._create_article(author=second_user)
 
         # Test saving by register_view
-        start_state_of_list = article.viewed_users_str
+        start_state_of_list = article.viewed_users.all().count()
         article.register_view(self.user)
-        end_state_of_list = article.viewed_users_str
+        end_state_of_list = article.viewed_users.all().count()
         self.assertNotEqual(start_state_of_list, end_state_of_list)
 
-        start_state_of_list = article.viewed_users_str
+        start_state_of_list = article.viewed_users.all().count()
         article.register_view(self.user)
-        end_state_of_list = article.viewed_users_str
+        end_state_of_list = article.viewed_users.all().count()
         self.assertEqual(start_state_of_list, end_state_of_list)
 
         # Test register AnonymousUser
@@ -115,10 +115,10 @@ class ArticleTest(TestCase):
         article = self._create_article()
         self.assertTrue(isinstance(article.views_count, int))
 
-        # Test error viewed_users_str handler
-        with self.assertRaises(SyntaxError):
-            article.viewed_users_str = "non list"
-            views_count = article.views_count
+        # Test viewed_users count
+        article.viewed_users.add(self.user)
+        article.save()
+        self.assertEqual(article.views_count, 1)
 
     def _create_article(
             self,
