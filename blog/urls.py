@@ -31,6 +31,11 @@ urlpatterns = [
         kwargs={'article_id': None}
     ),
     path(
+        'category_list',
+        views.CategoryListView.as_view(),
+        name="category_list"
+    ),
+    path(
         'category/<int:category_id>/<int:page>/',
         views.CategoryDetailView.as_view(),
         name='category_detail'
