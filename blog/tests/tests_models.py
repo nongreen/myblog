@@ -115,10 +115,10 @@ class ArticleTest(TestCase):
         article = self._create_article()
         self.assertTrue(isinstance(article.views_count, int))
 
-        # Test error viewed_users_str handler
-        with self.assertRaises(SyntaxError):
-            article.viewed_users_str = "non list"
-            views_count = article.views_count
+        # Test viewed_users count
+        article.viewed_users.add(self.user)
+        article.save()
+        self.assertEqual(article.views_count, 1)
 
     def _create_article(
             self,
