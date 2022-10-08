@@ -26,6 +26,7 @@ class Article(models.Model):
 
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
+        related_name="author",
         verbose_name='Author',
         blank=False,
         null=False,
@@ -58,9 +59,10 @@ class Article(models.Model):
         editable=False
     )
 
-    # viewed_users_str storage list of viewed_users
-    # This solution uses for adding it in DB
-    viewed_users_str = models.TextField(default='[]', editable=False)
+    viewed_users = models.ManyToManyField(
+        BlogUser,
+        related_name="viewed_users"
+    )
 
     class Meta:
         ordering = ['-publish']
@@ -107,15 +109,15 @@ class Article(models.Model):
 
         self.save()
 
-    def register_view(self, user: BlogUser) -> None:
-        """ Add present user to viewed_user_list, if he isn't in it"""
-        viewed_user_list = self.viewed_users_list
+    def register_view(self, user: BlogUser or AnonymousUser) -> None:
+        """ Add present user to viewed_user, if he isn't in it"""
+        self_article = Article.objects.get(id=self.id)
 
-        if isinstance(user, BlogUser) and user.username not in viewed_user_list:
-            viewed_user_list.append(user.username)
-            self.viewed_users_str = str(viewed_user_list)
-            self.save(update_fields=['viewed_users_str'])
-        elif isinstance(user, BlogUser) and user.username in viewed_user_list:
+        if isinstance(user, BlogUser) and \
+                user.username not in self_article.viewed_users.all():
+            self_article.viewed_users.add(user)
+            self_article.save()
+        elif isinstance(user, BlogUser) and user.username in self.viewed_users:
             return
         elif isinstance(user, AnonymousUser):
             return
@@ -123,22 +125,8 @@ class Article(models.Model):
             raise ValueError(f"Required BlogUser, excepted {type(user)}")
 
     @property
-    def viewed_users_list(self) -> list:
-        """ Convert viewed users from str to list and return it """
-        if isinstance(self.viewed_users_str, str):
-            viewed_users_list = ast.literal_eval(self.viewed_users_str)
-
-            if not isinstance(viewed_users_list, list):
-                raise ValueError("viewed_users_str variable storage not list")
-
-            return viewed_users_list
-
-    @property
     def views_count(self):
-        if isinstance(self.viewed_users_list, list):
-            return len(self.viewed_users_list)
-        else:
-            raise ValueError("viewed_users_list return not list")
+        return self.viewed_users.all().count()
 
     @property
     def comments_to_self_article(self) -> QuerySet:
