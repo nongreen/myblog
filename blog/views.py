@@ -89,6 +89,16 @@ class CategoryDetailView(ListView):
 
         return article_list
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        queryset_id = self.kwargs["category_id"]
+        category = get_object_or_404(Category, id=queryset_id)
+
+        kwargs["category"] = category
+        return super(CategoryDetailView, self).get_context_data(
+            object_list=object_list,
+            **kwargs
+        )
+
 
 def manage_article_view(request, article_id=None):
     # Edition article, if can
