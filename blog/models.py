@@ -138,6 +138,7 @@ class Article(models.Model):
         return self.body[0:LENGTH_SHORT_BODY]
 
 
+# todo: create validator for name (one of parameters is dont start with spaces)
 class Category(models.Model):
     """ Storage articles. Name required. """
     id = models.BigAutoField(primary_key=True)

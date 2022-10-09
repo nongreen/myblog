@@ -56,6 +56,18 @@ class ArticleDetailView(DetailView):
         return super(ArticleDetailView, self).get_context_data(**kwargs)
 
 
+class CategoryListView(ListView):
+    """ Storage of all categories. Queryset is sorted by abc """
+    template_name = "blog/category_list.html"
+    model = Category
+    context_object_name = "category_list"
+
+    def get_queryset(self):
+        category_list = super(CategoryListView, self).get_queryset()
+        category_list = category_list.order_by("name")
+        return category_list
+
+
 class CategoryDetailView(ListView):
     """ Uses to storage and show articles inhered to same category """
     template_name = "blog/category_detail.html"
