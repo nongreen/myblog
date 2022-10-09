@@ -1,9 +1,22 @@
 {% extends 'share_layout/base.html' %}
+{% load static %}
 {% load blog_tags %}
+{% block header %}
+    <link type="text/css" rel="stylesheet" href="{% static 'blog/category_list/css/category_list.css' %}">
+{% endblock %}
 {% block content %}
     <div class="container categories">
-        {% for category in category_list %}
-            <a href="{% url 'category_detail' category_id=category.id page=1 %}">{{ category.name }}</a>
-        {% endfor %}
+        <h1>Categories</h1>
+        <div class="category-list-container">
+            {% for category in category_list %}
+                <div class="category-name-container">
+                    <a class="category-name h1"
+                       href="{% url 'category_detail' category_id=category.id page=1 %}">{{ category.name }}</a>
+                </div>
+                {% autoescape off %}
+                    {% return_br_if_residue_of_division_equal_zero forloop.counter 3 %}
+                {% endautoescape %}
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

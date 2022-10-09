@@ -55,5 +55,16 @@ def get_html_from_markdown(markdown_text) -> str:
 
 
 @register.simple_tag
+def return_br_if_residue_of_division_equal_zero(
+        dividend_value: int,
+        divider_value: int) -> str:
+    if isinstance(dividend_value, int) and isinstance(divider_value, int) and \
+            dividend_value % divider_value == 0:
+        return "<br><br>"
+    else:
+        return ""
+
+
+@register.simple_tag
 def test(user):
     return user.__class__

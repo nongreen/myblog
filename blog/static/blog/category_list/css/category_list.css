@@ -1,0 +1,9 @@
+.category-list-container{
+        display: block;
+}
+
+.category-name-container{
+        position: flex;
+        display: inline;
+        margin-left: 15px;
+}
