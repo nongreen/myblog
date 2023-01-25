@@ -7,5 +7,10 @@ A blog system based on `python 3.9.13` and `Django 4.0.5`
 - Complete support of Comments: adding, deleting, editing, replying (under developing)
 - Custom User model, simplified user registration
 # Installation:
-Change MySQL client from `pymysql` to `mysqlclient`, more details please reference [pypi](https://pypi.org/project/mysqlclient/) , checkout preperation before installation.  
-Install via pip `pip install -rU requirements.txt`
+- Clone this repository
+- Install dependencies via pip `pip install -rU requirements.txt`
+- Setup database in `myblog/settings.py`
+- Do makemigrations
+- Do sqlmigrate for any app (accounts, blog, comments)
+- Do migrate
+- Run server
